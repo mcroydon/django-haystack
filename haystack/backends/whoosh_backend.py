@@ -173,12 +173,18 @@ class SearchBackend(BaseSearchBackend):
             # Determine if we need to reverse the results and if Whoosh can
             # handle what it's being asked to sort by. Reversing is an
             # all-or-nothing action, unfortunately.
+            sort_by_list = []
+            
             for order_by in sort_by:
                 if order_by.startswith('-'):
                     if len(sort_by) > 1:
                         raise SearchBackendError("Whoosh does not handle more than one field being ordered in reverse.")
-                    
+                    sort_by_list.append(order_by[1:])
                     reverse = True
+                else:
+                    sort_by_list.append(order_by)
+            
+            sort_by = sort_by_list
         
         if facets is not None:
             warnings.warn("Whoosh does not handle faceting.", Warning, stacklevel=2)
